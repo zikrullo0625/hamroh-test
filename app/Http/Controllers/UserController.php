@@ -156,7 +156,8 @@ class UserController extends Controller
             'password' => 'required|min:8',
         ]);
 
-        $user = User::find($id)->update($validated);
+        $user = User::find($id);
+        $user->update($validated);
 
         return response()->json([
             'status' => 'success',
