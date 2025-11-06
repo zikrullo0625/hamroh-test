@@ -1,7 +1,6 @@
 <?php
 
-use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::apiResource('users', UserController::class);
+Route::prefix('v1')->group(base_path('routes/api/v1.php'));

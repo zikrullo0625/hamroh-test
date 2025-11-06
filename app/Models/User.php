@@ -6,8 +6,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
 /**
+ * @method static \Illuminate\Database\Eloquent\Builder drivers()
+ * @method static \Illuminate\Database\Eloquent\Builder passengers()
+ *
  * @OA\Schema(
  *     schema="User",
  *     type="object",
@@ -26,6 +28,9 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
+    const string ROLE_DRIVER = 'driver';
+    const string ROLE_PASSENGER = 'passenger';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -35,6 +40,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role'
     ];
 
     /**
@@ -58,5 +64,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function scopeDrivers($query)
+    {
+        return $query->where('role', self::ROLE_DRIVER);
+    }
+
+    public function scopePassengers($query)
+    {
+        return $query->where('role', self::ROLE_PASSENGER);
     }
 }

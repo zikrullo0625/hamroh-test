@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Modules\Driver\Controllers;
 
-use App\Models\User;
+use App\Http\Controllers\Controller;
+use App\Modules\Driver\DTO\DriverDTO;
+use App\Modules\Driver\Services\DriverService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 /**
  * @OA\Info(
@@ -14,8 +15,11 @@ use Illuminate\Support\Facades\Hash;
  * )
  */
 
-class UserController extends Controller
+class DriverController extends Controller
 {
+    public function __construct(public DriverService $userService)
+    {}
+
     /**
      * @OA\Get(
      *     path="/api/users",
@@ -37,7 +41,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::all();
+        $users = $this->userService->index();
 
         return response()->json([
             'status' => 'success',
@@ -68,7 +72,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::find($id);
+        $user = $this->userService->show($id);
 
         return response()->json([
             'status' => 'success',
@@ -108,9 +112,9 @@ class UserController extends Controller
             'password' => 'required|min:8',
         ]);
 
-        $validated['password'] = Hash::make($validated['password']);
+        $userDto = new DriverDTO($validated);
 
-        $user = User::create($validated);
+        $user = $this->userService->store($userDto);
 
         return response()->json([
             'status' => 'success',
@@ -156,8 +160,7 @@ class UserController extends Controller
             'password' => 'required|min:8',
         ]);
 
-        $user = User::find($id);
-        $user->update($validated);
+        $user = $this->userService->update($id, $validated);
 
         return response()->json([
             'status' => 'success',
@@ -187,7 +190,7 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        User::find($id)->delete();
+        $this->userService->destroy($id);
 
         return response()->json([
             'status' => 'success',
