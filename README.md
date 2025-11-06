@@ -19,7 +19,7 @@ API проект на Laravel для управления пользовател
 1. Клонируем репозиторий:
 
 ```bash
-git clone 
+git clone https://github.com/zikrullo0625/hamroh-test.git
 cd hamroh-test
 ```
 
