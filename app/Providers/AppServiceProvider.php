@@ -22,12 +22,50 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::define('end-ride', function (User $user, Ride $ride) {
-            return $user->id === $ride->driver_id;
+        Gate::define('view-ride', function ($user, Ride $ride) {
+            if ($ride->status->name === 'created') {
+                if ($user->role === 'passenger' && $ride->passenger_id !== $user->id) {
+                    return false;
+                }
+                return true;
+            }
+
+            if ($user->role === 'driver' && $ride->driver_id === $user->id) {
+                return true;
+            }
+
+            if ($user->role === 'passenger' && $ride->passenger_id === $user->id) {
+                return true;
+            }
+
+            return false;
         });
 
-        Gate::define('see-ride', function (User $user, Ride $ride) {
-            return $user->id === $ride->driver_id;
+        Gate::define('cancel-ride', function ($user, Ride $ride) {
+            if ($ride->status->name !== 'created') return false;
+            return ($user->role === 'driver' && $ride->driver_id === $user->id) ||
+                ($user->role === 'passenger' && $ride->passenger_id === $user->id);
+        });
+
+        Gate::define('change-ride-status', function ($user, Ride $ride) {
+            if ($user->role === 'driver' && $ride->driver_id === $user->id) return true;
+            return false;
+        });
+
+        Gate::define('create-ride', function ($user) {
+            if ($user->role === 'passenger') {
+                return true;
+            }
+
+            if ($user->role === 'driver') {
+                $hasActiveRide = Ride::where('driver_id', $user->id)
+                    ->whereIn('status->name', ['in_progress', 'accepted'])
+                    ->exists();
+
+                return !$hasActiveRide;
+            }
+
+            return false;
         });
     }
 }

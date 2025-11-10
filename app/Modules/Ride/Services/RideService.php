@@ -9,6 +9,7 @@ use App\Modules\Ride\Repositories\RideRepository;
 use App\Modules\Driver\Repositories\DriverRepository;
 use App\Modules\Passenger\Repositories\PassengerRepository;
 use App\Repositories\UserRepository;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -30,11 +31,21 @@ class RideService
 
     public function show($id)
     {
-        return $this->rideRepository->find($id);
+        $ride = $this->rideRepository->find($id);
+
+        if (Gate::denies('view-ride', $ride)) {
+            abort(403, 'У вас нету доступа!');
+        }
+
+        return $ride;
     }
 
     public function store(RideDTO $data)
     {
+        if (Gate::denies('create-ride')) {
+            abort(403, 'У вас нету доступа!');
+        }
+
         $ride = $this->rideRepository->create($data->toArray());
 
         $data = $ride->toArray();
@@ -97,10 +108,22 @@ class RideService
 
     public function changeStatus($id, string $status)
     {
+        $ride = $this->rideRepository->find($id);
+
         if ($status === 'cancelled') {
-            $data = $this->rideRepository->find($id)->toArray();
-            $data['_'] = 'deleteRide';
-            broadcast(new RideEvent($data));
+            if (Gate::denies('cancel-ride', $ride)) {
+                abort(403, 'У вас нету доступа!');
+            }
+
+            $rideArray = $ride->toArray();
+            $rideArray['_'] = 'deleteRide';
+            broadcast(new RideEvent($rideArray));
+
+            return $this->rideRepository->changeStatus($id, $status);
+        }
+
+        if (Gate::denies('change-ride-status', $ride)) {
+            abort(403, 'У вас нету доступа!.');
         }
 
         return $this->rideRepository->changeStatus($id, $status);

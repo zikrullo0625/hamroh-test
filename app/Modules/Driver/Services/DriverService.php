@@ -5,6 +5,7 @@ namespace App\Modules\Driver\Services;
 use App\Models\User;
 use App\Modules\Driver\DTO\DriverDTO;
 use App\Modules\Driver\Repositories\DriverRepository;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 
 class DriverService
@@ -52,6 +53,12 @@ class DriverService
 
     public function actualRide($user_id)
     {
-        return $this->driverRepository->getActualRide($user_id);
+        $ride = $this->driverRepository->getActualRide($user_id);
+
+        if (Gate::denies('view-ride', $ride)) {
+            abort(403, 'У вас нету доступа!');
+        }
+
+        return $ride;
     }
 }

@@ -4,6 +4,7 @@ namespace App\Modules\Passenger\Services;
 
 use App\Modules\Passenger\DTO\PassengerDTO;
 use App\Modules\Passenger\Repositories\PassengerRepository;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 
 class PassengerService
@@ -51,6 +52,12 @@ class PassengerService
 
     public function actualRide($user_id)
     {
-        return $this->passengerRepository->getActualRide($user_id);
+        $ride = $this->passengerRepository->getActualRide($user_id);
+
+        if (Gate::denies('view-ride', $ride)) {
+            abort(403, 'У вас нету доступа!');
+        }
+
+        return $ride;
     }
 }

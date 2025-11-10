@@ -71,9 +71,9 @@ class RideController extends Controller
      *     )
      * )
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
-        $ride = $this->rideService->show($id);
+        $ride = $this->rideService->show($id, $request->user());
 
         return response()->json([
             'success' => true,

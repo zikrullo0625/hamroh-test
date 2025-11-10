@@ -429,7 +429,8 @@ export default {
                 distance: this.routeInfo.distance_km,
                 duration: this.routeInfo.duration_min,
                 price: this.routeInfo.estimated_cost,
-                geometry: this.routePath
+                geometry: this.routePath,
+                passenger_id: this.userId
             };
 
             this.api.post('/rides', rideData).then((res) => {
@@ -441,6 +442,11 @@ export default {
 
             this.$emit('ride-created');
             this.clearPoints();
+        }
+    },
+    computed: {
+        userId() {
+            return localStorage.getItem('userId');
         }
     }
 };
