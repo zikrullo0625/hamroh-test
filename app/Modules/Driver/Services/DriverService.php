@@ -2,32 +2,33 @@
 
 namespace App\Modules\Driver\Services;
 
+use App\Models\User;
 use App\Modules\Driver\DTO\DriverDTO;
 use App\Modules\Driver\Repositories\DriverRepository;
 use Illuminate\Support\Facades\Hash;
 
 class DriverService
 {
-    protected DriverRepository $userRepository;
+    protected DriverRepository $driverRepository;
 
-    public function __construct(DriverRepository $userRepository)
+    public function __construct(DriverRepository $driverRepository)
     {
-        $this->userRepository = $userRepository;
+        $this->driverRepository = $driverRepository;
     }
 
     public function index()
     {
-        return $this->userRepository->all();
+        return $this->driverRepository->all();
     }
 
     public function show($id)
     {
-        return $this->userRepository->find($id);
+        return $this->driverRepository->find($id);
     }
 
     public function store(DriverDTO $data)
     {
-        return $this->userRepository->create([
+        return $this->driverRepository->create([
             'name' => $data->name,
             'email' => $data->email,
             'password' => Hash::make($data->password),
@@ -36,16 +37,21 @@ class DriverService
 
     public function update($id, array $data)
     {
-        $user = $this->userRepository->find($id);
+        $user = $this->driverRepository->find($id);
 
         $data['password'] = Hash::make($data['password']);
 
-        return $this->userRepository->update($user, $data);
+        return $this->driverRepository->update($user, $data);
     }
 
     public function destroy($id)
     {
-        $user = $this->userRepository->find($id);
-        return $this->userRepository->delete($user);
+        $user = $this->driverRepository->find($id);
+        return $this->driverRepository->delete($user);
+    }
+
+    public function actualRide($user_id)
+    {
+        return $this->driverRepository->getActualRide($user_id);
     }
 }

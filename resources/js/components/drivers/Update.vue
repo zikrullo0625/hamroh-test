@@ -15,7 +15,7 @@
                 Обновить пользователя
             </h2>
 
-            <form @submit.prevent="updateUser" class="space-y-4">
+            <form @submit.prevent="updateDriver" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Имя</label>
                     <input
@@ -62,9 +62,9 @@
 
 <script>
 export default {
-    name: "UpdateUserModal",
+    name: "UpdateDriverModal",
     props: {
-        user: {
+        driver: {
             type: Object,
             required: true,
         },
@@ -76,17 +76,17 @@ export default {
     data() {
         return {
             form: {
-                name: this.user?.name || "",
-                email: this.user?.email || "",
+                name: this.driver?.name || "",
+                email: this.driver?.email || "",
                 password: "",
             },
         }
     },
     methods: {
-        async updateUser() {
+        async updateDriver() {
             try {
-                const response = await this.api.put(`/drivers/${this.user.id}`, this.form)
-                this.$emit("updated", response.data.user)
+                const response = await this.api.put(`/drivers/${this.driver.id}`, this.form)
+                this.$emit("updated", response.data.driver)
                 this.$emit("close")
             } catch (error) {
                 console.error(error)

@@ -9,7 +9,8 @@ import DriversShow from '../components/drivers/Show.vue'
 import VehiclesIndex from '../components/vehicles/Index.vue'
 import VehiclesShow from '../components/vehicles/Show.vue'
 
-import RidesIndex from '../components/rides/Index.vue'
+import RidesAdminIndex from '../components/rides/AdminIndex.vue'
+import RidesDriverIndex from '../components/rides/DriverIndex.vue'
 import RidesShow from '../components/rides/Show.vue'
 
 import PaymentsIndex from '../components/payments/Index.vue'
@@ -18,7 +19,27 @@ import PaymentsShow from '../components/payments/Show.vue'
 import RatingsIndex from '../components/ratings/Index.vue'
 import RatingsShow from '../components/ratings/Show.vue'
 
+import Register from '../components/auth/Register.vue'
+import Login from '../components/auth/Login.vue'
+import CreateRide from "../components/rides/CreateRide.vue";
+
+let ridesIndex = RidesAdminIndex
+let ridesShow = RidesShow
+
+const userRole = localStorage.getItem('userRole')
+
+if (userRole === 'admin') {
+    ridesIndex = RidesAdminIndex
+} else {
+    ridesIndex = RidesDriverIndex
+}
+
+console.log(userRole)
+
 const routes = [
+    { path: '/register', component: Register, name: 'register' },
+    { path: '/login', component: Login, name: 'login' },
+
     {
         path: '/passengers',
         children: [
@@ -26,6 +47,7 @@ const routes = [
             { path: ':id', component: PassengersShow, name: 'passengers.show' },
         ],
     },
+
     {
         path: '/drivers',
         children: [
@@ -45,8 +67,8 @@ const routes = [
     {
         path: '/rides',
         children: [
-            { path: '', component: RidesIndex, name: 'rides.index' },
-            { path: ':id', component: RidesShow, name: 'rides.show' },
+            { path: '', component: ridesIndex, name: 'rides.index' },
+            { path: ':id', component: ridesShow, name: 'rides.show' },
         ],
     },
 
@@ -66,7 +88,19 @@ const routes = [
         ],
     },
 
-    { path: '/', redirect: '/users' },
+    { path: '/', redirect: '/rides' },
+
+    {
+        path: '/actual',
+        name: 'ActualRides',
+        component: RidesShow,
+        props: { actual: true }
+    },
+    {
+        path: '/order-taxi',
+        name: 'OrderTaxi',
+        component: CreateRide,
+    }
 ]
 
 export const router = createRouter({

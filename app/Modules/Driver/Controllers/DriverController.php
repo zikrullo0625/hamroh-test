@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 
 class DriverController extends Controller
 {
-    public function __construct(public DriverService $userService)
+    public function __construct(public DriverService $driverService)
     {}
 
     /**
@@ -41,11 +41,11 @@ class DriverController extends Controller
      */
     public function index()
     {
-        $users = $this->userService->index();
+        $drivers = $this->driverService->index();
 
         return response()->json([
-            'status' => 'success',
-            'users' => $users,
+            'success' => true,
+            'drivers' => $drivers,
         ]);
     }
 
@@ -72,11 +72,11 @@ class DriverController extends Controller
      */
     public function show($id)
     {
-        $user = $this->userService->show($id);
+        $driver = $this->driverService->show($id);
 
         return response()->json([
-            'status' => 'success',
-            'user' => $user,
+            'success' => true,
+            'driver' => $driver,
         ]);
     }
 
@@ -114,11 +114,11 @@ class DriverController extends Controller
 
         $userDto = new DriverDTO($validated);
 
-        $user = $this->userService->store($userDto);
+        $driver = $this->driverService->store($userDto);
 
         return response()->json([
-            'status' => 'success',
-            'user' => $user,
+            'success' => true,
+            'driver' => $driver,
         ]);
     }
 
@@ -160,11 +160,11 @@ class DriverController extends Controller
             'password' => 'required|min:8',
         ]);
 
-        $user = $this->userService->update($id, $validated);
+        $driver = $this->driverService->update($id, $validated);
 
         return response()->json([
-            'status' => 'success',
-            'user' => $user,
+            'success' => true,
+            'driver' => $driver,
         ]);
     }
 
@@ -190,10 +190,20 @@ class DriverController extends Controller
      */
     public function destroy($id)
     {
-        $this->userService->destroy($id);
+        $this->driverService->destroy($id);
 
         return response()->json([
-            'status' => 'success',
+            'success' => true,
+        ]);
+    }
+
+    public function actualRide(Request $request)
+    {
+        $ride = $this->driverService->actualRide($request->user()->id);
+
+        return response()->json([
+            'success' => true,
+            'ride' => $ride
         ]);
     }
 }

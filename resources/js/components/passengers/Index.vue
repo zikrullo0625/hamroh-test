@@ -1,38 +1,74 @@
 <template>
-    <div class="overflow-x-auto w-full">
-        <table class="min-w-full divide-y divide-gray-200 border border-gray-200">
-            <thead class="bg-gray-50">
+    <div class="w-full max-h-[calc(100vh-100px)] overflow-y-auto overflow-x-auto border border-gray-200 rounded-lg shadow-sm">
+        <table class="min-w-[800px] w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50 sticky top-0 z-10">
             <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created at</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Updated at</th>
-                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                    ID
+                </th>
+                <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                    Name
+                </th>
+                <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                    Number
+                </th>
+                <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                    Created at
+                </th>
+                <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                    Updated at
+                </th>
+                <th
+                    class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                    Actions
+                </th>
             </tr>
             </thead>
 
             <tbody class="bg-white divide-y divide-gray-200">
             <tr
-                v-for="user in users"
-                :key="user.id"
+                v-for="passenger in passengers"
+                :key="passenger.id"
                 class="hover:bg-gray-100 cursor-pointer"
-                @click="goToProfile(user.id)"
+                @click="goToProfile(passenger.id)"
             >
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.id }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.name }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.email }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.created_at }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.updated_at }}</td>
-                <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900 flex gap-x-2">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ passenger.id }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ passenger.name }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ passenger.number }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ new Date(passenger.created_at).toLocaleString() }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {{ new Date(passenger.updated_at).toLocaleString() }}
+                </td>
+                <td
+                    class="px-3 py-3 whitespace-nowrap text-sm text-gray-900 flex gap-x-2"
+                >
                     <button
-                        @click.stop="openModal(user)"
+                        @click.stop="openModal(passenger)"
                         class="rounded-md bg-amber-400 text-white px-2 py-1 hover:bg-amber-500"
                     >
                         Изменить
                     </button>
                     <button
-                        @click.stop="deleteUser(user.id)"
+                        @click.stop="deletePassenger(passenger.id)"
                         class="rounded-md bg-red-500 text-white px-2 py-1 hover:bg-red-600"
                     >
                         Удалить
@@ -44,10 +80,10 @@
 
         <Update
             v-if="showModal"
-            :user="selectedUser"
+            :passenger="selectedPassenger"
             :visible="showModal"
             @close="showModal = false"
-            @updated="onUserUpdated"
+            @updated="onPassengerUpdated"
         />
     </div>
 </template>
@@ -60,37 +96,37 @@ export default {
     components: { Update },
     data() {
         return {
-            users: [],
+            passengers: [],
             showModal: false,
-            selectedUser: null,
+            selectedPassenger: null,
         }
     },
     mounted() {
-        this.getUsers()
+        this.getPassengers()
     },
     methods: {
         goToProfile(id) {
             this.$router.push('/passengers/' + id);
         },
-        getUsers() {
+        getPassengers() {
             this.api.get('/passengers').then((response) => {
-                this.users = response.data.users
+                this.passengers = response.data.passengers
             })
         },
-        openModal(user) {
-            this.selectedUser = { ...user }
+        openModal(passenger) {
+            this.selectedPassenger = { ...passenger }
             this.showModal = true
         },
-        onUserUpdated(updatedUser) {
-            const index = this.users.findIndex(u => u.id === updatedUser.id)
+        onPassengerUpdated(updatedPassenger) {
+            const index = this.passengers.findIndex(u => u.id === updatedPassenger.id)
             if (index !== -1) {
-                this.users[index] = updatedUser
+                this.passengers[index] = updatedPassenger
             }
         },
-        deleteUser(id) {
+        deletePassenger(id) {
             if (confirm('Удалить пользователя?')) {
                 this.api.delete(`/passengers/${id}`).then(() => {
-                    this.users = this.users.filter((u) => u.id !== id)
+                    this.passengers = this.passengers.filter((u) => u.id !== id)
                 })
             }
         },

@@ -1,71 +1,55 @@
 <template>
-    <div
-        v-if="visible"
-        class="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
-    >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6 relative">
-            <button
-                @click="$emit('close')"
-                class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 transition"
-            >
-                ✕
-            </button>
+    <div class="min-h-screen bg-gray-50 p-6">
+        <div class="max-w-4xl mx-auto bg-white shadow-xl rounded-2xl p-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Данные водителя</h1>
 
-            <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">
-                Обновить пользователя
-            </h2>
-
-            <form @submit.prevent="updateUser" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-800">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Имя</label>
-                    <input
-                        v-model="form.name"
-                        type="text"
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-300 focus:outline-none"
-                        placeholder="Введите имя"
-                        required
-                    />
+                    <span class="font-medium">ID:</span>
+                    <span>{{ driver.id }}</span>
                 </div>
-
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input
-                        v-model="form.email"
-                        type="email"
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-300 focus:outline-none"
-                        placeholder="Введите email"
-                        required
-                    />
+                    <span class="font-medium">Имя:</span>
+                    <span>{{ driver.name }}</span>
                 </div>
-
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Пароль</label>
-                    <input
-                        v-model="form.password"
-                        type="password"
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-300 focus:outline-none"
-                        placeholder="Введите новый пароль"
-                        required
-                    />
+                    <span class="font-medium">Email:</span>
+                    <span>{{ driver.email }}</span>
                 </div>
-
-                <button
-                    type="submit"
-                    class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition"
-                >
-                    Обновить
-                </button>
-            </form>
+                <div>
+                    <span class="font-medium">Роль:</span>
+                    <span>{{ driver.role }}</span>
+                </div>
+                <div>
+                    <span class="font-medium">Создан:</span>
+                    <span>{{ driver.created_at }}</span>
+                </div>
+                <div>
+                    <span class="font-medium">Обновлён:</span>
+                    <span>{{ driver.updated_at }}</span>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-
 export default {
-    props: {
-        user: Object,
-        visible: Boolean
+    data() {
+      return {
+          driver: []
+      }
+    },
+    methods: {
+        getDriver(id) {
+            this.api.get('/drivers/' + id)
+                .then((response) => {
+                    this.driver = response.data.driver
+                })
+        }
+    },
+    mounted() {
+        this.getDriver(this.$route.params.id)
     }
 }
 </script>

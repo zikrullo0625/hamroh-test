@@ -3,9 +3,14 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Modules\Driver\Models\DriverLocation;
+use App\Modules\Driver\Models\Vehicle;
+use App\Modules\Ride\Models\Ride;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+
 /**
  * @method static \Illuminate\Database\Eloquent\Builder drivers()
  * @method static \Illuminate\Database\Eloquent\Builder passengers()
@@ -26,10 +31,10 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
-    const string ROLE_DRIVER = 'driver';
-    const string ROLE_PASSENGER = 'passenger';
+    const ROLE_DRIVER = 'driver';
+    const ROLE_PASSENGER = 'passenger';
 
     /**
      * The attributes that are mass assignable.
@@ -40,7 +45,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role'
+        'role',
+        'number'
     ];
 
     /**
@@ -74,5 +80,25 @@ class User extends Authenticatable
     public function scopePassengers($query)
     {
         return $query->where('role', self::ROLE_PASSENGER);
+    }
+
+    public function ridesAsPassenger()
+    {
+        return $this->hasMany(Ride::class, 'passenger_id');
+    }
+
+    public function ridesAsDriver()
+    {
+        return $this->hasMany(Ride::class, 'driver_id');
+    }
+
+    public function vehicle(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Vehicle::class, 'vehicle_id');
+    }
+
+    public function location()
+    {
+        return $this->hasOne(DriverLocation::class, 'driver_id');
     }
 }
