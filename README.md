@@ -42,6 +42,17 @@ php artisan key:generate
 php artisan migrate
 ```
 
+7. Запускаем websocket:
+
+```bash
+php artisan reverb:start
+```
+
+8. Запускаем слушатель событий:
+
+```bash
+php artisan ride:listen
+```
 ---
 
 ## Запуск проекта
