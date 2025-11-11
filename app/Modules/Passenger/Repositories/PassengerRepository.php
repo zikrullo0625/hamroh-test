@@ -25,7 +25,7 @@ class PassengerRepository
         $user = User::findOrFail($user_id);
 
         return $user->ridesAsPassenger()
-            ->whereHas('statuses', function ($query) {
+            ->whereHas('status', function ($query) {
                 $query->whereIn('name', ['in_progress', 'accepted', 'created']);
             })
             ->with($this->ride_relations)

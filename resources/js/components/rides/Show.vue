@@ -159,11 +159,11 @@
                             </p>
                         </div>
 
-                        <button v-if="ride.status.name !== 'created' && ride.status.name !== 'cancelled'" @click="cancelRide" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded-lg transition">
+                        <button v-if="ride.status.name !== 'cancelled'" @click="cancelRide" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded-lg transition">
                             Отменить поездку
                         </button>
 
-                        <button v-if="ride.status.name === 'created'" @click="takeRide" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-lg transition mt-2">
+                        <button v-if="ride.status.name === 'created' && isDriver" @click="takeRide" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-lg transition mt-2">
                             Взять
                         </button>
 
@@ -453,7 +453,9 @@ export default {
             }
         },
         deleteRide(ride) {
-            this.$router.push('/actual');
+            if(this.isDriver) {
+                this.$router.push('/actual');
+            }
         },
         takeRide() {
             this.api.post('/take-ride/' + this.ride.id)
@@ -472,7 +474,7 @@ export default {
                     this.center = this.toCoords;
                 }
 
-                this.newStatus = this.ride.status?.name || "";
+                this.newStatus = this.ride?.status?.name || "";
             } catch (e) {
                 console.error('Ошибка загрузки поездки:', e);
             }
@@ -489,7 +491,6 @@ export default {
             }
         },
         async cancelRide() {
-            if (!confirm("Вы уверены, что хотите отменить поездку?")) return;
             try {
                 const res = await this.api.post(`/rides/change-status/${this.ride.id}`, {status: 'cancelled'});
                 if (res.data.success) {

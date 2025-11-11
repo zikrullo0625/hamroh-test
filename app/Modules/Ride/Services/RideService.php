@@ -9,6 +9,7 @@ use App\Modules\Ride\Repositories\RideRepository;
 use App\Modules\Driver\Repositories\DriverRepository;
 use App\Modules\Passenger\Repositories\PassengerRepository;
 use App\Repositories\UserRepository;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
@@ -50,7 +51,7 @@ class RideService
 
         $data = $ride->toArray();
         $data['_'] = 'newRide';
-        broadcast(new RideEvent($data));
+        $this->cacheRide($data);
 
         return $ride;
     }
@@ -67,6 +68,11 @@ class RideService
     public function destroy($id)
     {
         $ride = $this->rideRepository->find($id);
+
+        $data = $ride->toArray();
+        $data['_'] = 'deleteRide';
+        $this->cacheRide($data);
+
         return $this->rideRepository->delete($ride);
     }
 
@@ -115,9 +121,9 @@ class RideService
                 abort(403, 'У вас нету доступа!');
             }
 
-            $rideArray = $ride->toArray();
-            $rideArray['_'] = 'deleteRide';
-            broadcast(new RideEvent($rideArray));
+            $data = $ride->toArray();
+            $data['_'] = 'deleteRide';
+            $this->cacheRide($data);
 
             return $this->rideRepository->changeStatus($id, $status);
         }
@@ -140,8 +146,21 @@ class RideService
 
         $data = $ride->toArray();
         $data['_'] = 'deleteRide';
-        broadcast(new RideEvent($data));
+        $this->cacheRide($data);
 
         return $ride;
+    }
+
+    protected function cacheRide(array $data)
+    {
+        $cached_rides = Cache::get('rides', []);
+
+        $cached_rides = array_filter($cached_rides, function ($r) use ($data) {
+            return !($r['id'] === $data['id'] && $r['_'] === $data['_']);
+        });
+
+        $cached_rides[] = $data;
+
+        Cache::put('rides', array_values($cached_rides));
     }
 }

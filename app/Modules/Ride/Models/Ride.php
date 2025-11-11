@@ -3,6 +3,7 @@
 namespace App\Modules\Ride\Models;
 
 use App\Models\User;
+use App\Modules\Payment\Models\Payment;
 use App\Modules\Rating\Models\Rating;
 use Illuminate\Database\Eloquent\Model;
 
@@ -56,5 +57,10 @@ class Ride extends Model
     public function rating()
     {
         return $this->hasOne(Rating::class);
+    }
+
+    public function payment()
+    {
+        return $this->hasOne(Payment::class);
     }
 }

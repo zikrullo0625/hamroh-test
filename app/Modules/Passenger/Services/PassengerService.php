@@ -54,7 +54,7 @@ class PassengerService
     {
         $ride = $this->passengerRepository->getActualRide($user_id);
 
-        if (Gate::denies('view-ride', $ride)) {
+        if ($ride && Gate::denies('view-ride', $ride)) {
             abort(403, 'У вас нету доступа!');
         }
 

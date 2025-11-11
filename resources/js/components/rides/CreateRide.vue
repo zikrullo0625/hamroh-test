@@ -149,7 +149,36 @@
                     </button>
                 </div>
 
-                <!-- Информация о маршруте -->
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h4 class="text-sm font-semibold text-gray-800 mb-3">
+                        <i class="fas fa-credit-card"></i> Тип оплаты
+                    </h4>
+
+                    <div class="flex gap-3">
+                        <button
+                            type="button"
+                            @click="paymentType = 'cash'"
+                            :class="paymentType === 'cash'
+                ? 'bg-blue-500 text-white'
+                : 'bg-white text-gray-800 hover:bg-gray-100'"
+                            class="flex-1 py-2 px-4 rounded-lg border border-gray-300 flex items-center justify-center gap-2 transition-colors"
+                        >
+                            <i class="fas fa-money-bill-wave"></i> Наличные
+                        </button>
+
+                        <button
+                            type="button"
+                            @click="paymentType = 'card'"
+                            :class="paymentType === 'card'
+                ? 'bg-blue-500 text-white'
+                : 'bg-white text-gray-800 hover:bg-gray-100'"
+                            class="flex-1 py-2 px-4 rounded-lg border border-gray-300 flex items-center justify-center gap-2 transition-colors"
+                        >
+                            <i class="fas fa-credit-card"></i> Карта
+                        </button>
+                    </div>
+                </div>
+
                 <div v-if="loading" class="rounded-lg p-4 text-gray-800 bg-white shadow-sm flex items-center justify-center">
                     <h1 class="text-sm"><i class="fa-solid fa-spinner fa-spin-pulse"></i> Загрузка...</h1>
                 </div>
@@ -215,6 +244,7 @@ export default {
             loading: false,
             searchFrom: '',
             searchTo: '',
+            paymentType: 'cash',
             fromResults: [],
             toResults: [],
             showFromResults: false,
@@ -430,7 +460,8 @@ export default {
                 duration: this.routeInfo.duration_min,
                 price: this.routeInfo.estimated_cost,
                 geometry: this.routePath,
-                passenger_id: this.userId
+                passenger_id: this.userId,
+                payment_type: this.paymentType
             };
 
             this.api.post('/rides', rideData).then((res) => {

@@ -117,6 +117,7 @@ class RideController extends Controller
             'to'             => 'required|array',
             'from_address'   => 'string|nullable',
             'to_address'     => 'string|nullable',
+            'payment_type'   => 'string|required',
         ]);
 
         $rideDto = RideDTO::fromArray($validated);

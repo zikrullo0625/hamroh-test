@@ -17,6 +17,7 @@ class RideDTO
     public ?string $to_address;
     public ?string $created_at;
     public ?string $updated_at;
+    public ?string $payment_type;
 
     public function __construct(array $data = [])
     {
@@ -33,6 +34,7 @@ class RideDTO
         $this->to_address = $data['to_address'] ?? null;
         $this->created_at = $data['created_at'] ?? null;
         $this->updated_at = $data['updated_at'] ?? null;
+        $this->payment_type = $data['payment_type'] ?? null;
     }
 
     public static function fromArray(array $data): self

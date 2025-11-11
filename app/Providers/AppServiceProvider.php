@@ -22,6 +22,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+
         Gate::define('view-ride', function ($user, Ride $ride) {
             if ($ride->status->name === 'created') {
                 if ($user->role === 'passenger' && $ride->passenger_id !== $user->id) {
@@ -53,19 +55,13 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::define('create-ride', function ($user) {
-            if ($user->role === 'passenger') {
-                return true;
-            }
+            $hasActiveRide = Ride::where($user->role . '_id', $user->id)
+                ->whereHas('status', function ($q) {
+                    $q->whereIn('name', ['in_progress', 'accepted', 'created']);
+                })
+                ->exists();
 
-            if ($user->role === 'driver') {
-                $hasActiveRide = Ride::where('driver_id', $user->id)
-                    ->whereIn('status->name', ['in_progress', 'accepted'])
-                    ->exists();
-
-                return !$hasActiveRide;
-            }
-
-            return false;
+            return !$hasActiveRide;
         });
     }
 }

@@ -17,7 +17,8 @@ class RideRepository
         'passenger',
         'statuses',
         'status',
-        'rating'
+        'rating',
+        'payment'
     ];
 
     public function all(): \Illuminate\Database\Eloquent\Collection
@@ -49,7 +50,16 @@ class RideRepository
     {
         $ride = Ride::create($data);
         $ride->setStatus('created');
+        $this->createPayment($ride, $data['payment_type']);
         return $ride->load($this->relations);
+    }
+
+    public function createPayment(Ride $ride, $payment_type)
+    {
+        $ride->payment()->create([
+            'type' => $payment_type,
+        ]);
+        $ride->save();
     }
 
     public function update(Ride $ride, array $data): Ride

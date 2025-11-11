@@ -21,6 +21,7 @@ class RideEvent implements ShouldBroadcast
      */
     public function __construct(public array $ride)
     {
+        Log::info('Ride event: ' . $this->ride['id']);
     }
 
     /**

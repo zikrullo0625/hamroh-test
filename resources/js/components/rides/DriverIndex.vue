@@ -125,8 +125,11 @@ export default {
             console.log('Updated rides:', this.rides);
         },
         newRide(ride) {
-            console.log(ride)
-            this.rides.push(ride);
+            const exists = this.rides.some(r => r.id === ride.id);
+            if (!exists) {
+                this.rides.push(ride);
+            }
+
         },
         formatDate(date) {
             return new Date(date).toLocaleString();

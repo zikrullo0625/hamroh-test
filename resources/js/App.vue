@@ -70,8 +70,8 @@ export default {
                 {label: "Passengers", to: "/passengers", icon: "fas fa-users", show: role === 'admin'},
                 {label: "Vehicles", to: "/vehicles", icon: "fas fa-car", show: role === 'admin'},
                 {label: "Rides", to: "/rides", icon: "fas fa-route", show: true},
-                {label: "Payments", to: "/payments", icon: "fas fa-credit-card", show: true},
-                {label: "Ratings", to: "/ratings", icon: "fas fa-star", show: true},
+                // {label: "Payments", to: "/payments", icon: "fas fa-credit-card", show: true},
+                // {label: "Ratings", to: "/ratings", icon: "fas fa-star", show: true},
             ];
         }
     }
